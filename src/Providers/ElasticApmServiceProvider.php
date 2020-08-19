@@ -55,7 +55,7 @@ class ElasticApmServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(Agent::class, function () {
-            $builder = resolve(AgentBuilder::class);
+            $builder = app::make(AgentBuilder::class);
 
             $builder->withConfig(new Config(
                 array_merge(
@@ -81,14 +81,6 @@ class ElasticApmServiceProvider extends ServiceProvider
         $this->app->alias(Agent::class, 'elastic-apm');
 
         $this->app->instance('query-log', new Collection());
-
-        // Register a callback on terminating to send the events
-        $this->app->terminating(function (Request $request, Response $response) {
-            /** @var Agent $agent */
-            $agent = resolve(Agent::class);
-
-            $agent->send();
-        });
     }
 
     /**
