@@ -78,7 +78,9 @@ class RecordTransaction
 
         $transaction->setResponse($this->response($response));
         $transaction->setMeta($this->metadata($response));
-        $transaction->setUserContext($this->userContext($request));
+        if (!app()->runningUnitTests()) {
+            $transaction->setUserContext($this->userContext($request));
+        }
         $transaction->setCustomContext($this->customContext($request, $response));
 
         foreach (app('query-log') as $query) {
