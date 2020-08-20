@@ -56,7 +56,7 @@ class RecordTransaction
      */
     final public function handle($request, Closure $next)
     {
-        if ($this->inExceptArray($request)) {
+        if ($this->inExceptArray($request) || app()->runningUnitTests()) {
             return $next($request);
         }
 
@@ -78,9 +78,7 @@ class RecordTransaction
 
         $transaction->setResponse($this->response($response));
         $transaction->setMeta($this->metadata($response));
-        if (!app()->runningUnitTests()) {
-            $transaction->setUserContext($this->userContext($request));
-        }
+        $transaction->setUserContext($this->userContext($request));
         $transaction->setCustomContext($this->customContext($request, $response));
 
         foreach (app('query-log') as $query) {
